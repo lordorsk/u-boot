@@ -1,0 +1,69 @@
+// SPDX-License-Identifier: GPL-2.0-or-later
+/dts-v1/;
+
+#include <dt-bindings/input/gpio-keys.h>
+#include <dt-bindings/input/linux-event-codes.h>
+
+#include "tegra30-asus-grouper-common.dtsi"
+
+/ {
+	model = "ASUS Google Nexus 7 (Project Nakasi / ME370T) PM269";
+	compatible = "asus,grouper", "nvidia,tegra30";
+
+	host1x@50000000 {
+		status = "okay";
+		dc@54200000 {
+			status = "okay";
+			rgb {
+				status = "okay";
+
+				nvidia,panel = <&panel>;
+
+				display-timings {
+					timing@0 {
+						/* 1280x800@60Hz */
+						clock-frequency = <68000000>;
+						hactive = <800>;
+						vactive = <1280>;
+						hfront-porch = <24>;
+						hback-porch = <32>;
+						hsync-len = <24>;
+						vsync-len = <1>;
+						vfront-porch = <5>;
+						vback-porch = <32>;
+					};
+				};
+			};
+		};
+	};
+
+	pmic_i2c: i2c@7000d000 {
+		status = "okay";
+		clock-frequency = <400000>;
+
+		/* Texas Instruments TPS659110 PMIC */
+		pmic: tps65911@2d {
+			compatible = "ti,tps65911";
+			reg = <0x2d>;
+
+			interrupts = <GIC_SPI 86 IRQ_TYPE_LEVEL_HIGH>;
+			#interrupt-cells = <2>;
+			interrupt-controller;
+
+			ti,system-power-controller;
+
+			#gpio-cells = <2>;
+			gpio-controller;
+
+			regulators {
+				/* eMMC VDD */
+				vcore_emmc: ldo1 {
+					regulator-name = "vdd_emmc_core";
+					regulator-min-microvolt = <1000000>;
+					regulator-max-microvolt = <3300000>;
+					regulator-always-on;
+				};
+			};
+		};
+	};
+};
