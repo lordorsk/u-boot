@@ -9,6 +9,36 @@
 / {
 	model = "Asus Transformer Infinity TF700T";
 
+	host1x@50000000 {
+		status = "okay";
+		dc@54200000 {
+			clocks = <&tegra_car TEGRA30_CLK_DISP1>,
+				 <&tegra_car TEGRA30_CLK_PLL_D_OUT0>;
+			status = "okay";
+
+			rgb {
+				status = "okay";
+
+				nvidia,panel = <&tc358768>;
+
+				display-timings {
+					timing@0 {
+						/* 1920x1200@60Hz */
+						clock-frequency = <154000000>;
+						hactive = <1920>;
+						vactive = <1200>;
+						hfront-porch = <48>;
+						hback-porch = <80>;
+						hsync-len = <32>;
+						vsync-len = <6>;
+						vfront-porch = <3>;
+						vback-porch = <26>;
+					};
+				};
+			};
+		};
+	};
+
 	pmic_i2c: i2c@7000d000 {
 		status = "okay";
 		clock-frequency = <400000>;
@@ -53,6 +83,43 @@
 		};
 	};
 
+	i2c-mux {
+		compatible = "i2c-mux-gpio";
+
+		mux-gpios = <&gpio TEGRA_GPIO(X, 0) GPIO_ACTIVE_HIGH>;
+		i2c-parent = <&lcd_ddc>;
+		idle-state = <0x0>;
+
+		#address-cells = <1>;
+		#size-cells = <0>;
+
+		i2c@1 {
+			reg = <1>;
+			#address-cells = <1>;
+			#size-cells = <0>;
+
+			tc358768: dsi@7 {
+				compatible = "toshiba,tc358768";
+				reg = <0x7>;
+
+				#address-cells = <1>;
+				#size-cells = <0>;
+
+				clocks = <&tc358768_refclk>;
+				clock-names = "refclk";
+
+				gate-gpios = <&gpio TEGRA_GPIO(D, 2) GPIO_ACTIVE_HIGH>;
+				reset-gpios = <&gpio TEGRA_GPIO(N, 6) GPIO_ACTIVE_LOW>;
+
+				vddc-supply = <&vdd_1v2_mipi>;
+				vddio-supply = <&vddio_1v8_mipi>;
+				vddmipi-supply = <&vdd_1v2_mipi>;
+
+				panel = <&panel>;
+			};
+		};
+	};
+
 	backlight: backlight {
 		compatible = "pwm-backlight";
 
@@ -86,6 +153,15 @@
 		};
 	};
 
+	panel: panel {
+		compatible = "simple-panel";
+
+		power-supply = <&vdd_pnl_reg>;
+		enable-gpios = <&gpio TEGRA_GPIO(U, 5) GPIO_ACTIVE_HIGH>;
+
+		backlight = <&backlight>;
+	};
+
 	regulators {
 		compatible = "simple-bus";
 		#address-cells = <1>;
@@ -111,5 +187,31 @@
 			gpio = <&gpio TEGRA_GPIO(H, 3) GPIO_ACTIVE_HIGH>;
 			enable-active-high;
 		};
+
+		vdd_1v2_mipi: regulator@2 {
+			compatible = "regulator-fixed";
+			reg = <2>;
+			regulator-name = "tc358768_1v2_vdd";
+			regulator-min-microvolt = <1200000>;
+			regulator-max-microvolt = <1200000>;
+			gpio = <&gpio TEGRA_GPIO(BB, 3) GPIO_ACTIVE_HIGH>;
+			enable-active-high;
+		};
+
+		vddio_1v8_mipi: regulator@3 {
+			compatible = "regulator-fixed";
+			reg = <3>;
+			regulator-name = "tc358768_1v8_vddio";
+			regulator-min-microvolt = <1800000>;
+			regulator-max-microvolt = <1800000>;
+			gpio = <&gpio TEGRA_GPIO(C, 6) GPIO_ACTIVE_HIGH>;
+			enable-active-high;
+		};
+	};
+
+	tc358768_refclk: clock-tc358768 {
+		compatible = "fixed-clock";
+		#clock-cells = <0>;
+		clock-frequency = <23100000>;
 	};
 };
