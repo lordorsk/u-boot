@@ -58,7 +58,6 @@
 
 static struct pmux_pingrp_config endeavoru_pinmux_common[] = {
 	/* SDMMC1 pinmux */
-	DEFAULT_PINMUX(SDMMC1_CLK_PZ0,  SDMMC1, NORMAL,   NORMAL, OUTPUT),
 	DEFAULT_PINMUX(SDMMC1_CMD_PZ1,  SDMMC1,     UP,   NORMAL,  INPUT),
 	DEFAULT_PINMUX(SDMMC1_DAT3_PY4,  UARTE, NORMAL,   NORMAL, OUTPUT),
 	DEFAULT_PINMUX(SDMMC1_DAT2_PY5,  UARTE, NORMAL,   NORMAL,  INPUT),
@@ -357,6 +356,10 @@ static struct pmux_pingrp_config endeavoru_pinmux_common[] = {
 	DEFAULT_PINMUX(PEX_L2_PRSNT_N_PDD7,  PCIE, NORMAL, NORMAL, INPUT),
 	DEFAULT_PINMUX(PEX_L2_RST_N_PCC6,    PCIE, NORMAL, NORMAL, INPUT),
 	DEFAULT_PINMUX(PEX_L2_CLKREQ_N_PCC7, PCIE, NORMAL, NORMAL, INPUT),
+};
+
+static struct pmux_pingrp_config endeavoru_pinmux_uart[] = {
+	DEFAULT_PINMUX(SDMMC1_CLK_PZ0,  SDMMC1, NORMAL,   NORMAL, OUTPUT),
 };
 
 #endif	/* _PINMUX_CONFIG_TRANSFORMER_H_ */

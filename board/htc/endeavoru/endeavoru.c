@@ -31,14 +31,20 @@ int do_poweroff(struct cmd_tbl *cmdtp,
 }
 #endif
 
-/*
- * Routine: pinmux_init
- * Description: Do individual peripheral pinmux configs
- */
+void gpio_early_init_uart(void)
+{
+	pinmux_config_pingrp_table(endeavoru_pinmux_uart,
+		ARRAY_SIZE(endeavoru_pinmux_uart));
+
+	/* Switch UART-E on */
+	gpio_request(TEGRA_GPIO(Z, 0), "AUD_REMO_OE");
+	gpio_direction_output(TEGRA_GPIO(Z, 0), 0);
+}
+
 void pinmux_init(void)
 {
-	pinmux_config_pingrp_table(endeavoru_pinmux_common,
-		ARRAY_SIZE(endeavoru_pinmux_common));
+//	pinmux_config_pingrp_table(endeavoru_pinmux_common,
+//		ARRAY_SIZE(endeavoru_pinmux_common));
 
 	/* Initialize any non-default pad configs (APB_MISC_GP regs) */
 //	pinmux_config_drvgrp_table(cardhu_padctrl, ARRAY_SIZE(cardhu_padctrl));
