@@ -5,6 +5,7 @@
  */
 
 #include <common.h>
+#include <command.h>
 #include <log.h>
 #include <asm/arch-tegra/crypto.h>
 #include "bct.h"
@@ -21,7 +22,7 @@ static u8 sbk[AES128_KEY_LENGTH] = {
  * \param ect		bootloader start in RAM
  * \param ebt_size	bootloader file size in bytes
  */
-int bct_patch(u8 *bct, u8 *ebt, u32 ebt_size)
+static int bct_patch(u8 *bct, u8 *ebt, u32 ebt_size)
 {
 	u8 ebt_hash[AES128_KEY_LENGTH] = { 0 };
 	nvboot_config_table *bct_tbl = NULL;
@@ -62,3 +63,19 @@ int bct_patch(u8 *bct, u8 *ebt, u32 ebt_size)
 
 	return 0;
 }
+
+static int do_ebtupdate(struct cmd_tbl *cmdtp, int flag, int argc,
+		     char *const argv[])
+{
+	u32 bct_addr = hextoul(argv[1], NULL);
+	u32 ebt_addr = hextoul(argv[2], NULL);
+	u32 ebt_size = hextoul(argv[3], NULL);
+
+	return bct_patch((u8 *)bct_addr, (u8 *)ebt_addr, ebt_size);
+}
+
+U_BOOT_CMD(
+	ebtupdate,	4,	0,	do_ebtupdate,
+	"update bootloader on Tegra30 devices",
+	""
+);
