@@ -48,6 +48,7 @@
 
 /* Used for downstream */
 #define CONFIG_MACH_TYPE		MACH_TYPE_EDGE_U
+#define CONFIG_PRAM 4096		/* 2MB + 2MB from end is trustzone */
 
 #include "tegra-common-post.h"
 
