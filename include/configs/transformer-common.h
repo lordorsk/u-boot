@@ -215,6 +215,9 @@
 	"if load mmc ${bootdev}:1 ${kernel_addr_r} ${kernel_file};" \
 	"then echo Loading DTB;" \
 		"load mmc ${bootdev}:1 ${fdt_addr_r} ${fdtfile};" \
+		"fdt addr ${fdt_addr_r};" \
+		"fdt rm /firmware;" \
+		"fdt rm /reserved-memory/trustzone@bfe00000;" \
 		"setenv bootargs console=ttyS0,115200n8 root=/dev/mmcblk${bootdev}p${rootpart} rw gpt;" \
 		"echo Loading Initramfs;" \
 		"if load mmc ${bootdev}:1 ${ramdisk_addr_r} ${ramdisk_file};" \
