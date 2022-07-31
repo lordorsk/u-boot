@@ -11,11 +11,8 @@
 #include "bct.h"
 #include "uboot_aes.h"
 
-/* SBK is device/board specific, insert your here instead of 0x00 */
-static u8 sbk[AES128_KEY_LENGTH] = {
-	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
-};
+/* If board does not pass sbk, keep it 0 */
+__weak void get_secure_key(u8 *key) {}
 
 /*
  * \param bct		boot config table start in RAM
@@ -25,9 +22,12 @@ static u8 sbk[AES128_KEY_LENGTH] = {
 static int bct_patch(u8 *bct, u8 *ebt, u32 ebt_size)
 {
 	u8 ebt_hash[AES128_KEY_LENGTH] = { 0 };
+	u8 sbk[AES128_KEY_LENGTH] = { 0 };
 	nvboot_config_table *bct_tbl = NULL;
 	u8 *bct_hash = bct;
 	int ret;
+
+	get_secure_key(sbk);
 
 	bct += BCT_HASH;
 
