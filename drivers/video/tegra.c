@@ -371,8 +371,8 @@ static int tegra_lcd_of_to_plat(struct udevice *dev)
 		return -EINVAL;
 	}
 	timing = &priv->timing;
-	priv->width = timing->hactive.typ;
-	priv->height = timing->vactive.typ;
+	priv->width = timing->vactive.typ;
+	priv->height = timing->hactive.typ;
 	priv->pixel_clock = timing->pixelclock.typ;
 	priv->log2_bpp = VIDEO_BPP16;
 
