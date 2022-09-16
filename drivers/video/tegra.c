@@ -134,7 +134,7 @@ static int update_display_mode(struct dc_disp_reg *disp,
 	 * the display clock (typically 600MHz) to the pixel clock. We round
 	 * up or down as requried.
 	 */
-	rate = clock_get_periph_rate(PERIPH_ID_DISP1, CLOCK_ID_CGENERAL);
+	rate = clock_get_periph_rate(PERIPH_ID_DISP1, CLOCK_ID_DISPLAY);
 	div = ((rate * 2 + priv->pixel_clock / 2) / priv->pixel_clock) - 2;
 	debug("Display clock %lu, divider %lu\n", rate, div);
 
@@ -281,7 +281,7 @@ static int tegra_display_probe(const void *blob, struct tegra_lcd_priv *priv,
 	 */
 	clock_start_periph_pll(PERIPH_ID_HOST1X, CLOCK_ID_PERIPH,
 			       144 * 1000000);
-	clock_start_periph_pll(PERIPH_ID_DISP1, CLOCK_ID_CGENERAL,
+	clock_start_periph_pll(PERIPH_ID_DISP1, CLOCK_ID_DISPLAY,
 			       600 * 1000000);
 	basic_init(&dc->cmd);
 	basic_init_timer(&dc->disp);
