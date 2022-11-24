@@ -1,0 +1,92 @@
+menu "Console"
+
+config MENU
+	bool
+	help
+	  This is the library functionality to provide a text-based menu of
+	  choices for the user to make choices with.
+
+config CONSOLE_RECORD
+	bool "Console recording"
+	help
+	  This provides a way to record console output (and provide console
+	  input) through circular buffers. This is mostly useful for testing.
+	  Console output is recorded even when the console is silent.
+	  To enable console recording, call console_record_reset_enable()
+	  from your code.
+
+config CONSOLE_RECORD_INIT_F
+	bool "Enable console recording during pre-relocation init"
+	depends on CONSOLE_RECORD && SYS_MALLOC_F
+	default y
+	help
+	  This option enables console recording during pre-relocation init.
+	  CONFIG_SYS_MALLOC_F must be enabled to use this feature.
+
+config CONSOLE_RECORD_OUT_SIZE
+	hex "Output buffer size"
+	depends on CONSOLE_RECORD
+	default 0x400 if CONSOLE_RECORD
+	help
+	  Set the size of the console output buffer. When this fills up, no
+	  more data will be recorded until some is removed. The buffer is
+	  allocated immediately after the malloc() region is ready.
+
+config CONSOLE_RECORD_OUT_SIZE_F
+	hex "Output buffer size before relocation"
+	depends on CONSOLE_RECORD
+	default 0x400 if CONSOLE_RECORD
+	help
+	  Set the size of the console output buffer before relocation. When
+	  this fills up, no more data will be recorded until some is removed.
+	  The buffer is allocated immediately after the early malloc() region is
+	  ready.
+
+config CONSOLE_RECORD_IN_SIZE
+	hex "Input buffer size"
+	depends on CONSOLE_RECORD
+	default 0x100 if CONSOLE_RECORD
+	help
+	  Set the size of the console input buffer. When this contains data,
+	  tstc() and getc() will use this in preference to real device input.
+	  The buffer is allocated immediately after the malloc() region is
+	  ready.
+
+config DISABLE_CONSOLE
+	bool "Add functionality to disable console completely"
+	help
+		Disable console (in & out).
+
+config IDENT_STRING
+	string "Board specific string to be added to uboot version string"
+	help
+	  This options adds the board specific name to u-boot version.
+
+config LOGLEVEL
+	int "loglevel"
+	default 4
+	range 0 10
+	help
+	  All Messages with a loglevel smaller than the console loglevel will
+	  be compiled in. The loglevels are defined as follows:
+
+	    0 - emergency
+	    1 - alert
+	    2 - critical
+	    3 - error
+	    4 - warning
+	    5 - note
+	    6 - info
+	    7 - debug
+	    8 - debug content
+	    9 - debug hardware I/O
+
+config SPL_LOGLEVEL
+	int
+	depends on SPL
+	default LOGLEVEL
+
+config TPL_LOGLEVEL
+	int
+	depends on TPL
+	default LOGLEVEL
